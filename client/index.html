@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <title>客户端</title>
+</head>
+
+<body>
+  from: <input id="fuuid" /><br />
+  to: <input id="touuid" /><br />
+  content: <input id="inputVal" />
+  <br />
+  <button id="submitUser">创建</button>
+  <button id="submit">提交</button>
+  <ul id="showLi">
+
+  </ul>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+<script>
+  $(function () {
+    var socket = io('http://127.0.0.1:8066')
+    $('#submitUser').click(()=>{
+      var onlineData = {
+        'touuid': $('#touuid').val(),
+        'fuuid': $('#fuuid').val(),
+      }
+      socket.emit('online', onlineData)
+    })
+  
+    socket.on('news', function (data) {
+      var _html = '<li>' + data.fuuid + ':' + data.content + '</li>'
+      $('#showLi').append(_html)
+    })
+    
+    $('#submit').click(function () {
+      var sendData = {
+        'touuid': $('#touuid').val(),
+        'fuuid': $('#fuuid').val(),
+        'content': $('#inputVal').val()
+      }
+      console.log(sendData)
+      var _html = '<li> 我:' + $('#inputVal').val() + '</li>'
+      $('#showLi').append(_html)
+      socket.emit('my other event', sendData)
+    })
+
+  })
+</script>
+
+</html>
